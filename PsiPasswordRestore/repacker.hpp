@@ -49,7 +49,7 @@ public:
 	void write_hashes(std::string const& path, std::vector<std::pair<string_t, hash_t<Size>>> pairs)
 	{
 		std::ofstream file(path, std::ios::out | std::ios::binary);
-		std::cout << "Writing to " << path << std::endl;
+		std::cout << "Writing to " << path << "..." << std::endl;
 
 		for (auto const& pair : pairs)
 			file.write(reinterpret_cast<char const*>(pair.second.data()), Size);
@@ -71,7 +71,7 @@ public:
 		}
 
 		std::ofstream file(path, std::ios::out | std::ios::binary);
-		std::cout << "Writing to " << path << std::endl;
+		std::cout << "Writing to " << path << "..." << std::endl;
 
 		file.write(reinterpret_cast<char const*>(index_list.data()), sizeof(uint64_t) * index_list.size());
 

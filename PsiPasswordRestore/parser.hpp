@@ -93,8 +93,6 @@ private:
 			if (!plaintext.empty() && std::find(plaintext.begin(), plaintext.end(), '\0') == plaintext.end())
 				results.push_back(password_pair_t(string_t(plaintext), hash_t<HashFormat::size>(this->hasher(plaintext.data(), plaintext.length()))));
 		}
-
-		std::cout << "Finished parsing." << std::endl;
 	}
 
 private:
