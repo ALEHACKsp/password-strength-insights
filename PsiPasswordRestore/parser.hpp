@@ -79,7 +79,7 @@ private:
 
 	void iterate_file(std::string const& path, std::vector<password_pair_t>& results)
 	{
-		std::cout << "Parsing \"" << path << "\"...";
+		std::cout << "Parsing " << path << "..." << std::endl;
 
 		std::ifstream file(path);
 

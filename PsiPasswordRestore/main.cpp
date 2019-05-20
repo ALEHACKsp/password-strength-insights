@@ -1,5 +1,7 @@
 ﻿#include "database.hpp"
 
+#include "repacker.hpp"
+
 #include <time.h>
 
 #include <chrono>
@@ -27,7 +29,7 @@ void repack(int argc, char* argv[])
 {
 	psi::repacker_t repacker;
 
-	for (int i = 1; i < argc; i++)
+	for (int i = 2; i < argc; i++)
 		repacker.repack_file(argv[i]);
 }
 
@@ -57,11 +59,9 @@ void recover_passwords(int argc, char* argv[])
 
 } // namespace psi
 
-#include "repacker.hpp"
-
 int main(int argc, char* argv[])
 {
-	if (argc < 2)
+	if (argc < 3)
 	{
 		std::cout << "Please supply one of the following parameters:" << std::endl;
 		std::cout << "-repack <password lists>\tRepack the password list into desired format" << std::endl;
@@ -77,17 +77,17 @@ int main(int argc, char* argv[])
 
 		auto start = std::chrono::high_resolution_clock::now();
 
-		if (strcmp(argv[0], "-repack") == 0)
+		if (strcmp(argv[1], "-repack") == 0)
 			psi::repack(argc, argv);
-		else if (strcmp(argv[0], "-recover") == 0)
+		else if (strcmp(argv[1], "-recover") == 0)
 			psi::recover_passwords(argc, argv);
+		else
+			std::cout << "IDK WAT DE FAK: " << argv[0] << std::endl;
 
 		auto end = std::chrono::high_resolution_clock::now();
 		auto time_span = std::chrono::duration_cast<std::chrono::duration<double>>(end - start);
 
 		std::cout << "Finished execution of functionality in " << time_span.count() << " seconds" << std::endl;
-		std::cin.ignore();
-		std::cin.get();
 		return 0;
 	}
 }

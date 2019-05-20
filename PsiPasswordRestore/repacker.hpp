@@ -5,8 +5,6 @@
 #include "hash_types.hpp"
 #include "parser_types.hpp"
 
-#include <iomanip>
-
 namespace psi {
 
 class repacker_t
