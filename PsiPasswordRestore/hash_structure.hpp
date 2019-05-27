@@ -9,13 +9,23 @@ template <std::size_t Size>
 class hash_base
 {
 public:
+	constexpr hash_base()
+	{
+		memset(this->hash.data(), 0, Size);
+	}
+
 	constexpr hash_base(std::array<uint8_t, Size> const& data) :
 		hash(data)
 	{
 
 	}
 
-	uint8_t const* data() const
+	constexpr std::array<uint8_t, Size>& get()
+	{
+		return this->hash;
+	}
+
+	constexpr uint8_t const* data() const
 	{
 		return this->hash.data();
 	}
@@ -23,6 +33,17 @@ public:
 	constexpr std::size_t length() const
 	{
 		return this->hash.size();
+	}
+
+	constexpr bool null() const
+	{
+		for (uint8_t const& b : hash)
+		{
+			if (b != 0)
+				return false;
+		}
+
+		return true;
 	}
 
 	constexpr bool operator<(hash_base<Size> const& other) const { return (this->hash < other.hash); }

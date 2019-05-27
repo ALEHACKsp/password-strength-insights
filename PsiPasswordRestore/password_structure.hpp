@@ -4,18 +4,22 @@
 #include <memory>
 #include <vector>
 
+#include "hash_structure.hpp"
+#include "string_structure.hpp"
+
 namespace psi {
 
-struct password
+struct password_t
 {
 	uint64_t id;
-	std::array<uint8_t, 16> nt;
-	std::unique_ptr<uint8_t[]> lm;
-	std::string plaintext;
+	hash_t<16> nt;
+	hash_t<16> lm;
+	string_t plaintext;
+	bool state;
 
 public:
-	password() = delete;
-	password(uint64_t id, std::vector<uint8_t> const& nt, std::vector<uint8_t> const& lm);
+	password_t() = delete;
+	password_t(uint64_t id, std::vector<uint8_t> const& nt, std::vector<uint8_t> const& lm);
 
 	bool compare_nt(std::array<uint8_t, 16> const& hash) const;
 	bool compare_lm(std::array<uint8_t, 16> const& hash) const;

@@ -1,6 +1,7 @@
 ﻿#include "database.hpp"
 
 #include "repacker.hpp"
+#include "resolver.hpp"
 
 #include <time.h>
 
@@ -19,12 +20,6 @@ void get_local_time(tm* const time)
 
 } // namespace detail
 
-void recover_plaintexts(std::vector<psi::password>& passwords)
-{
-	passwords[0].resolve(u8"汉字11123");
-	passwords[1].resolve("havfun");
-}
-
 void repack(int argc, char* argv[])
 {
 	psi::repacker_t repacker;
@@ -35,22 +30,35 @@ void repack(int argc, char* argv[])
 
 void recover_passwords(int argc, char* argv[])
 {
-	psi::database db;
+	std::vector<std::pair<hash_list_t, plaintext_list_t>> lookups;
 
-	if (db.connect())
+	for (int i = 2; i < argc; i++)
 	{
-		std::vector<psi::password> passwords;
-		
-		if (db.fetch_passwords(passwords))
-		{
-			recover_plaintexts(passwords);
+		lookups.push_back(std::make_pair(hash_list_t(), plaintext_list_t()));
+		lookups.back().first.open(argv[i] + std::string(".hl"));
+		lookups.back().second.open(argv[i] + std::string(".pl"));
+	}
 
-			for (psi::password const& password : passwords)
+	if (!lookups.empty())
+	{
+		psi::database db;
+
+		if (db.connect())
+		{
+			std::vector<psi::password_t> passwords;
+
+			if (db.fetch_passwords(passwords))
 			{
-				if (password.resolved())
+				resolver_t resolver;
+				resolver.test(lookups, passwords);
+
+				for (psi::password_t const& password : passwords)
 				{
-					printf("Resolved password [id: %I64d => password: %s]\n", password.id, password.plaintext.c_str());
-					db.update_password(password);
+					if (password.resolved())
+					{
+						printf("Resolved password [id: %I64d => password: %s]\n", password.id, password.plaintext.c_str());
+						db.update_password(password);
+					}
 				}
 			}
 		}
@@ -81,8 +89,6 @@ int main(int argc, char* argv[])
 			psi::repack(argc, argv);
 		else if (strcmp(argv[1], "-recover") == 0)
 			psi::recover_passwords(argc, argv);
-		else
-			std::cout << "IDK WAT DE FAK: " << argv[0] << std::endl;
 
 		auto end = std::chrono::high_resolution_clock::now();
 		auto time_span = std::chrono::duration_cast<std::chrono::duration<double>>(end - start);

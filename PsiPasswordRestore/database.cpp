@@ -45,7 +45,7 @@ bool database::alive() const
 	return (this->connection->isValid() && !this->connection->isClosed());
 }
 
-bool database::fetch_passwords(std::vector<psi::password>& passwords) const
+bool database::fetch_passwords(std::vector<psi::password_t>& passwords) const
 {
 	try
 	{
@@ -69,7 +69,7 @@ bool database::fetch_passwords(std::vector<psi::password>& passwords) const
 				std::vector<uint8_t> lm;
 				lm.assign(std::istreambuf_iterator<char>(*lm_blob), std::istreambuf_iterator<char>());
 
-				passwords.push_back(psi::password(id, nt, lm));
+				passwords.push_back(psi::password_t(id, nt, lm));
 			}
 
 			return true;
@@ -82,7 +82,7 @@ bool database::fetch_passwords(std::vector<psi::password>& passwords) const
 	}
 }
 
-bool database::update_password(psi::password const& password) const
+bool database::update_password(psi::password_t const& password) const
 {
 	try
 	{
@@ -91,7 +91,8 @@ bool database::update_password(psi::password const& password) const
 		else
 		{
 			std::unique_ptr<sql::PreparedStatement> statement(this->connection->prepareStatement("UPDATE `Passwords` SET `plaintext` = ? WHERE `id` = ?"));
-			statement->setString(1, &password.plaintext[0]);
+
+			statement->setString(1, password.plaintext.c_str());
 			statement->setUInt64(2, password.id);
 
 			return (statement->executeUpdate() != 0);

@@ -49,6 +49,9 @@ public:
 		std::ofstream file(path, std::ios::out | std::ios::binary);
 		std::cout << "Writing to " << path << "..." << std::endl;
 
+		uint64_t elements = pairs.size();
+		file.write(reinterpret_cast<char const*>(&elements), sizeof(uint64_t));
+
 		for (auto const& pair : pairs)
 			file.write(reinterpret_cast<char const*>(pair.second.data()), Size);
 
@@ -65,7 +68,7 @@ public:
 		for (auto const& pair : pairs)
 		{
 			index_list.insert(index_list.end(), offset);
-			offset += pair.first.bytes();
+			offset += pair.first.bytes() + 1;
 		}
 
 		std::ofstream file(path, std::ios::out | std::ios::binary);
@@ -74,7 +77,10 @@ public:
 		file.write(reinterpret_cast<char const*>(index_list.data()), sizeof(uint64_t) * index_list.size());
 
 		for (auto const& pair : pairs)
+		{
 			file.write(pair.first.c_str(), pair.first.bytes());
+			file.write("\0", 1);
+		}
 
 		file.flush();
 		file.close();

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "structures.hpp"
+#include "password_structure.hpp"
 
 #include <jdbc\mysql_driver.h>
 #include <jdbc\mysql_connection.h>
@@ -24,8 +24,8 @@ public:
 
 	bool alive() const;
 
-	bool fetch_passwords(std::vector<psi::password>& passwords) const;
-	bool update_password(psi::password const& password) const;
+	bool fetch_passwords(std::vector<psi::password_t>& passwords) const;
+	bool update_password(psi::password_t const& password) const;
 };
 
 } // namespace psi

@@ -4,6 +4,12 @@
 
 namespace psi {
 
+string_t::string_t() :
+	data(nullptr)
+{
+
+}
+
 string_t::string_t(std::string const& text)
 {
 	this->data = std::make_unique<char[]>(text.size() + 1);
@@ -33,9 +39,19 @@ string_t& string_t::operator=(string_t const& other)
 	return *this;
 }
 
+char* string_t::str() const
+{
+	return this->data.get();
+}
+
 char const* const string_t::c_str() const
 {
 	return this->data.get();
+}
+
+bool string_t::empty() const
+{
+	return (this->data == nullptr);
 }
 
 std::size_t string_t::bytes() const

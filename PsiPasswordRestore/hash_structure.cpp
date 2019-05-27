@@ -4,7 +4,7 @@
 
 namespace psi {
 
-inline bool hash_t<16>::compare(hash_t<16> const& other) const
+bool hash_t<16>::compare(hash_t<16> const& other) const
 {
 	__m128i const cmp128 = _mm_cmpeq_epi64(
 		*reinterpret_cast<__m128i const*>(this->hash.data()),
